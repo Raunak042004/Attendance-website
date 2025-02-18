@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Attendance Management System</title>
+  </head>
+  <body>
+    <div class="container mt-4">
+      <h2 class="text-center">Attendance Management System</h2>
+      <h4 id="overallAttendance" class="text-center">Overall Attendance: 0%</h4>
+      
+      <div class="mb-3">
+        <h5>Add Subject</h5>
+        <input type="text" id="subjectName" class="form-control mb-2" placeholder="Subject Name">
+        <button class="btn btn-primary" onclick="addSubject()">Add Subject</button>
+      </div>
+      
+      <div class="row">
+        <!-- Subjects Section -->
+        <div class="col-md-8" id="subjectsContainer"></div>
+      
+        <!-- Reminder Notes Section -->
+        <div class="col-md-4">
+          <div class="card reminder-card p-3 mt-2">
+            <h5>📌 Reminder Notes</h5>
+            <input type="text" id="reminderInput" class="form-control mb-2" placeholder="Write a reminder...">
+            <button class="btn btn-primary btn-sm" onclick="addReminder()">Add Reminder</button>
+            <ul id="reminderList" class="list-group mt-2"></ul>
+          </div>
+        </div>
+      </div>
+      
+    
+    <script>
+      let subjects = JSON.parse(localStorage.getItem("subjects")) || [];
+      
+      function addSubject() {
+        let subjectName = document.getElementById("subjectName").value.trim();
+        if (subjectName === "") return;
+        subjects.push({ name: subjectName, classes: [] });
+        saveSubjects();
+        updateSubjects();
+      }
+      
+      function deleteSubject(index) {
+        if (confirm("Are you sure you want to delete this subject?")) {
+          subjects.splice(index, 1);
+          saveSubjects();
+          updateSubjects();
+        }
+      }
+      
+      function saveSubjects() {
+        localStorage.setItem("subjects", JSON.stringify(subjects));
+      }
+      
+      function updateSubjects() {
+        let container = document.getElementById("subjectsContainer");
+        container.innerHTML = "";
+        
+        subjects.forEach((subject, index) => {
+          let totalClasses = subject.classes.length;
+          let attendedClasses = subject.classes.filter(c => c.attended).length;
+          let attendancePercent = totalClasses > 0 ? ((attendedClasses / totalClasses) * 100).toFixed(2) : 0;
+          let colorClass = attendancePercent < 75 ? 'text-danger' : attendancePercent > 85 ? 'text-success' : 'text-white';
+          
+          let subjectCard = `
+            <div class="card p-3 mt-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5>${subject.name}</h5>
+                <button class="btn btn-sm btn-danger" onclick="deleteSubject(${index})">Delete</button>
+              </div>
+              <p>Total Classes: ${totalClasses}</p>
+              <p>Attended Classes: ${attendedClasses}</p>
+              <p class="${colorClass}">Attendance Percentage: ${attendancePercent}%</p>
+              <input type="date" id="date-${index}" class="form-control mb-2">
+              <input type="time" id="time-${index}" class="form-control mb-2">
+              <button class="btn btn-info" onclick="addClass(${index})">Add Class</button>
+              <button class="btn btn-secondary mt-2" onclick="toggleClassHistory(${index})">Class History</button>
+              <div id="classPresent-${index}" class="mt-2"></div>
+              <div id="classHistory-${index}" class="mt-2" style="display:none;"></div>
+            </div>
+          `;
+          container.innerHTML += subjectCard;
+          updateClassLists(index);
+        });
+        updateOverallAttendance();
+      }
+      
+      function addClass(index) {
+        let date = document.getElementById(`date-${index}`).value;
+        let time = document.getElementById(`time-${index}`).value;
+        if (!date || !time) return;
+        
+        subjects[index].classes.push({ date, time, attended: null });
+        saveSubjects();
+        updateSubjects();
+      }
+      
+      function updateClassLists(index) {
+        let classPresentDiv = document.getElementById(`classPresent-${index}`);
+        let classHistoryDiv = document.getElementById(`classHistory-${index}`);
+        classPresentDiv.innerHTML = "<h6>Present Classes:</h6>";
+        classHistoryDiv.innerHTML = "<h6>Class History:</h6>";
+        let today = new Date().toISOString().split('T')[0];
+        
+        subjects[index].classes.forEach((c, i) => {
+          let classDate = new Date(c.date);
+          let currentDate = new Date(today);
+          let isPastOrToday = classDate <= currentDate;
+          let attendanceStatus = c.attended === null ? "Not Marked" : c.attended ? "Present" : "Absent";
+          
+          if (c.attended === null) {
+            classPresentDiv.innerHTML += `
+              <div class="d-flex justify-content-between p-2 border">
+                <span>${c.date} at ${c.time} - ${attendanceStatus}</span>
+                ${isPastOrToday ? `
+                <button class="btn btn-sm btn-success" onclick="confirmMarkAttendance(${index}, ${i}, true)">Present</button>
+                <button class="btn btn-sm btn-danger" onclick="confirmMarkAttendance(${index}, ${i}, false)">Absent</button>` : ""}
+              </div>
+            `;
+          } else {
+            classHistoryDiv.innerHTML += `
+              <div class="p-2 border">${c.date} at ${c.time} - ${attendanceStatus}</div>
+            `;
+          }
+        });
+      }
+      
+      function toggleClassHistory(index) {
+        let historyDiv = document.getElementById(`classHistory-${index}`);
+        historyDiv.style.display = historyDiv.style.display === "none" ? "block" : "none";
+      }
+      
+      function confirmMarkAttendance(subjectIndex, classIndex, isPresent) {
+        let statusText = isPresent ? "Present" : "Absent";
+        let confirmation = confirm(`Are you sure you want to mark this class as ${statusText}?`);
+        if (confirmation) {
+          subjects[subjectIndex].classes[classIndex].attended = isPresent;
+          saveSubjects();
+          updateSubjects();
+        }
+      }
+
+      function updateOverallAttendance() {
+        let totalClasses = subjects.reduce((sum, sub) => sum + sub.classes.length, 0);
+        let attendedClasses = subjects.reduce((sum, sub) => sum + sub.classes.filter(c => c.attended).length, 0);
+        let overall = totalClasses > 0 ? ((attendedClasses / totalClasses) * 100).toFixed(2) : 0;
+        let overallColorClass = overall < 75 ? 'text-danger' : overall > 85 ? 'text-success' : 'text-white';
+        document.getElementById("overallAttendance").innerHTML = `<span class="${overallColorClass}">Overall Attendance: ${overall}%</span>`;
+      }
+      
+      updateSubjects();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,205 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Header */
+.heading {
+    width: 100%;
+    background-color: #007bff;
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    padding: 30px;
+    font-weight: bold;
+    border-bottom: 5px solid #0056b3;
+}
+
+#school {
+    font-size: 42px;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+    font-weight: 700;
+}
+
+/* Centering Add Subject Section */
+.add-subject-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+#subjectName {
+    width: 40%;
+    font-size: 18px;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+#addSubjectBtn {
+    font-size: 20px;
+    padding: 10px 25px;
+}
+
+/* Adding Space Between Add Subject and Subjects */
+.subjects-container {
+    margin-top: 50px;
+}
+
+/* Login Form */
+.login {
+    display: flex;
+    height: 500px;
+    margin: 30px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.image {
+    width: 50%;
+    background-image: url('./images/child2.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.right {
+    width: 50%;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login_head {
+    font-size: 38px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+    width: 80%;
+    margin-bottom: 25px;
+}
+
+#form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+}
+
+#form input {
+    width: 100%;
+    padding: 15px 20px;
+    margin: 15px 0;
+    border: 2px solid #ced4da;
+    border-radius: 8px;
+    font-size: 20px;
+}
+
+#submit {
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+#submit:hover {
+    background-color: #0056b3;
+}
+
+/* Subjects Styling */
+.subject-card {
+    width: 100%;
+    max-width: 80%;
+    padding: 40px;
+    margin: 20px auto;
+    font-size: 28px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.subject-card button {
+    font-size: 22px;
+    padding: 14px 22px;
+    border-radius: 8px;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    margin: 40px auto;
+    border-collapse: collapse;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+    font-size: 20px;
+}
+
+th, td {
+    padding: 20px;
+    text-align: center;
+    border: 2px solid #dee2e6;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+    font-size: 22px;
+}
+
+/* Attendance Buttons */
+.td6 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.td6 > button {
+    margin: 8px;
+    padding: 12px 18px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+.td6 > button:nth-child(1) { background-color: #28a745; }
+.td6 > button:nth-child(2) { background-color: #dc3545; }
+.td6 > button:nth-child(3) { background-color: #6c757d; }
+
+#absent {
+    background-color: #dc3545;
+}
+/* Reminder Section Styling */
+.reminder-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.reminder-card h5 {
+    font-weight: bold;
+    color: #0056b3;
+}
+
+.dark-mode .reminder-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 6px 12px rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode .reminder-card h5 {
+    color: #ffffff;
+}
