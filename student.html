@@ -119,7 +119,9 @@
                 <span>${c.date} at ${c.time} - ${attendanceStatus}</span>
                 ${isPastOrToday ? `
                 <button class="btn btn-sm btn-success" onclick="confirmMarkAttendance(${index}, ${i}, true)">Present</button>
-                <button class="btn btn-sm btn-danger" onclick="confirmMarkAttendance(${index}, ${i}, false)">Absent</button>` : ""}
+                <button class="btn btn-sm btn-danger" onclick="confirmMarkAttendance(${index}, ${i}, false)">Absent</button>
+                <button class="btn btn-sm btn-warning" onclick="confirmMarkAttendance(${index}, ${i}, 'canceled')">Cancel</button>
+` : ""}
               </div>
             `;
           } else {
@@ -135,15 +137,16 @@
         historyDiv.style.display = historyDiv.style.display === "none" ? "block" : "none";
       }
       
-      function confirmMarkAttendance(subjectIndex, classIndex, isPresent) {
-        let statusText = isPresent ? "Present" : "Absent";
-        let confirmation = confirm(`Are you sure you want to mark this class as ${statusText}?`);
-        if (confirmation) {
-          subjects[subjectIndex].classes[classIndex].attended = isPresent;
-          saveSubjects();
-          updateSubjects();
+      function confirmMarkAttendance(subjectIndex, classIndex, status) {
+          let statusText = status === true ? "Present" : status === false ? "Absent" : "Canceled";
+          let confirmationMessage = status === 'canceled' ? "Are you sure you want to cancel your class?" : `Are you sure you want to mark this class as ${statusText}?`;
+          let confirmation = confirm(confirmationMessage);
+          if (confirmation) {
+            subjects[subjectIndex].classes[classIndex].attended = status;
+            saveSubjects();
+            updateSubjects();
+          }
         }
-      }
 
       function updateOverallAttendance() {
         let totalClasses = subjects.reduce((sum, sub) => sum + sub.classes.length, 0);
